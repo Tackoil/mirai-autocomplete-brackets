@@ -1,4 +1,4 @@
-package org.example.mirai.plugin
+package org.example.mirai.autobracket
 
 import net.mamoe.mirai.console.plugin.jvm.JvmPluginDescription
 import net.mamoe.mirai.console.plugin.jvm.KotlinPlugin
@@ -29,13 +29,35 @@ import net.mamoe.mirai.utils.info
  * 不用复制到 mirai-console-loader 或其他启动器中调试
  */
 
+val brackets = mapOf(
+    '(' to ')',
+    '[' to ']',
+    '{' to '}',
+    '（' to '）',
+    '【' to '】',
+    '「' to '」',
+    '『' to '』',
+)
+
+fun analyzeBracket(msg: String) : ArrayList<Char> {
+    val stack = ArrayList<Char>(msg.length)
+    for (c in msg) {
+        if (stack.size != 0 && brackets[stack[stack.size - 1]] == c){
+           stack.removeLastOrNull()
+        } else if (brackets.keys.contains(c) || brackets.values.contains(c)){
+            stack.add(c)
+        }
+    }
+    return stack
+}
+
 object PluginMain : KotlinPlugin(
     JvmPluginDescription(
-        id = "org.example.mirai-example",
-        name = "插件示例",
+        id = "org.example.mirai-autocomplete-brackets",
+        name = "让我看看谁没有补全括号",
         version = "0.1.0"
     ) {
-        author("作者名称或联系方式")
+        author("Tackoil")
         info(
             """
             这是一个测试插件, 
@@ -51,43 +73,16 @@ object PluginMain : KotlinPlugin(
         val eventChannel = GlobalEventChannel.parentScope(this)
         eventChannel.subscribeAlways<GroupMessageEvent>{
             //群消息
-            //复读示例
-            if (message.contentToString().startsWith("复读")) {
-                group.sendMessage(message.contentToString().replace("复读", ""))
+            val result = analyzeBracket(message.contentToString())
+            val backBrackets = result.filter { brackets.values.contains(it) }
+            if (backBrackets.isNotEmpty()){
+                group.sendMessage("让我看看谁没有补全括号？哦，补不全")
+            } else {
+                val autoBrackets = result.map {
+                    brackets[it]
+                }.reversed().joinToString(separator = "")
+                group.sendMessage("${autoBrackets}让我看看谁没有补全括号？")
             }
-            if (message.contentToString() == "hi") {
-                //群内发送
-                group.sendMessage("hi")
-                //向发送者私聊发送消息
-                sender.sendMessage("hi")
-                //不继续处理
-                return@subscribeAlways
-            }
-            //分类示例
-            message.forEach {
-                //循环每个元素在消息里
-                if (it is Image) {
-                    //如果消息这一部分是图片
-                    val url = it.queryUrl()
-                    group.sendMessage("图片，下载地址$url")
-                }
-                if (it is PlainText) {
-                    //如果消息这一部分是纯文本
-                    group.sendMessage("纯文本，内容:${it.content}")
-                }
-            }
-        }
-        eventChannel.subscribeAlways<FriendMessageEvent>{
-            //好友信息
-            sender.sendMessage("hi")
-        }
-        eventChannel.subscribeAlways<NewFriendRequestEvent>{
-            //自动同意好友申请
-            accept()
-        }
-        eventChannel.subscribeAlways<BotInvitedJoinGroupRequestEvent>{
-            //自动同意加群申请
-            accept()
         }
     }
 }
