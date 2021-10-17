@@ -37,6 +37,8 @@ val brackets = mapOf(
     '【' to '】',
     '「' to '」',
     '『' to '』',
+    '《' to '》',
+    '<' to '>'
 )
 
 fun analyzeBracket(msg: String) : ArrayList<Char> {
@@ -68,7 +70,7 @@ object PluginMain : KotlinPlugin(
     }
 ) {
     override fun onEnable() {
-        logger.info { "Plugin loaded" }
+        logger.info { "Plugin loaded -  Autocomplete Brackets" }
         //配置文件目录 "${dataFolder.absolutePath}/"
         val eventChannel = GlobalEventChannel.parentScope(this)
         eventChannel.subscribeAlways<GroupMessageEvent>{
@@ -77,7 +79,7 @@ object PluginMain : KotlinPlugin(
             val backBrackets = result.filter { brackets.values.contains(it) }
             if (backBrackets.isNotEmpty()){
                 group.sendMessage("让我看看谁没有补全括号？哦，补不全")
-            } else {
+            } else if (result.isNotEmpty()) {
                 val autoBrackets = result.map {
                     brackets[it]
                 }.reversed().joinToString(separator = "")
