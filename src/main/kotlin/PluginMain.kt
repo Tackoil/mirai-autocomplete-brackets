@@ -38,7 +38,13 @@ val brackets = mapOf(
     '「' to '」',
     '『' to '』',
     '《' to '》',
-    '<' to '>'
+    '<' to '>',
+    '＜' to '＞',
+    '〈' to '〉',
+    '｛' to '｝',
+    '［' to '］',
+    '／' to '＼',
+    '｟' to '｠',
 )
 
 fun analyzeBracket(msg: String) : ArrayList<Char> {
