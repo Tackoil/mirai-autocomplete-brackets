@@ -31,6 +31,13 @@ mirai-autocomplete-brackets 基于 [Mirai Console](https://github.com/mamoe/mira
 | 『 | 』 |
 | 《 | 》 |
 | < | > |
+| ＜ | ＞ |
+| 〈 | 〉|
+|｛ | ｝ |
+| ［ | ］ |
+| ／ | ＼ |
+| ｟ | ｠ |
+
 
 ## 构建
 
