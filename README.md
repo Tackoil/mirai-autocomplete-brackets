@@ -20,6 +20,8 @@ mirai-autocomplete-brackets 基于 [Mirai Console](https://github.com/mamoe/mira
 
 ### 受支持的自动补全符号
 
+以下为默认支持的括号，如有需要可到配置文件添加
+
 | 左符号 | 右符号 |
 | ------ | ------ |
 | ( | ) |
